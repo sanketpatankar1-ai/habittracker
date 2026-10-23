@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f7f7f2">
+  <meta name="description" content="A calmer way to build habits. Track your routines, notice your progress, and find a rhythm that works for you.">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Habit Tracker — Build a rhythm that feels like yours">
+  <meta property="og:description" content="A thoughtful space for daily habits, personal progress, and routines that last.">
+  <title>Habit Tracker — Build a rhythm that feels like yours</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/src/landing.css">
+  <script src="/src/landing.js" defer></script>
+</head>
+<body>
+  <header class="site-header">
+    <a class="wordmark" href="#top" aria-label="Habit Tracker home"><span class="brand-mark" aria-hidden="true">h</span><span>Habit Tracker</span></a>
+    <button class="menu-toggle" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="site-nav"><span></span><span></span></button>
+    <nav id="site-nav" aria-label="Main navigation"><a href="#experience">Experience</a><a href="#tools">Tools</a><a href="#how-it-works">How it works</a><a href="/signin">Sign in</a><a class="nav-cta" href="/app">Get started <span aria-hidden="true">↗</span></a></nav>
+  </header>
+
+  <main id="top">
+    <section class="hero section-wrap">
+      <div class="hero-copy reveal">
+        <p class="eyebrow"><span class="eyebrow-dot" aria-hidden="true"></span>A LITTLE BETTER, EVERY DAY</p>
+        <h1>Build a<br>rhythm that<br>feels like<br><span>yours.</span></h1>
+        <p class="hero-subtitle">Make space for the habits that make you feel good. See your progress clearly, one day at a time.</p>
+        <div class="hero-actions"><span class="primary-cta-wrap"><span class="cta-pointer" aria-hidden="true">↙</span><a class="button button-primary" href="/app">Start tracking free <span aria-hidden="true">↗</span></a></span><a class="button button-secondary" href="#experience">Take a look <span aria-hidden="true">↓</span></a></div>
+        <p class="hero-note">No account needed to begin.</p>
+      </div>
+      <figure class="hero-visual reveal">
+        <video class="showcase-video" autoplay loop playsinline controls preload="auto" poster="/src/assets/landing-dashboard-01.png" aria-label="A preview of the Habit Tracker experience">
+          <source src="/src/assets/landing-showcase-video.mp4" type="video/mp4">
+          Your browser does not support embedded video.
+        </video>
+        <figcaption class="visual-caption"><span class="status-dot" aria-hidden="true"></span>A calmer way to keep your promises to yourself.</figcaption>
+      </figure>
+      <div class="hero-meta reveal"><span>YOUR HABITS, IN VIEW</span><span>01 — THE DAILY PRACTICE</span></div>
+    </section>
+
+    <section class="intro-band"><div class="section-wrap intro-inner reveal"><p class="eyebrow">CONSISTENCY, WITHOUT THE PRESSURE</p><h2>Small steps add up.<br><span>Let’s make them count.</span></h2><p>A thoughtful home for your routines, without turning your life into another thing to optimize.</p></div></section>
+
+    <section class="experience-section section-wrap" id="experience">
+      <div class="section-heading reveal"><div><p class="eyebrow">A CLEARER PICTURE, OVER TIME</p><h2>Notice the effort.<br><span>Find your rhythm.</span></h2></div><p>Check in as you go. Your calendar and progress views help you see the small steps adding up.</p></div>
+      <div class="experience-collage">
+        <div class="experience-gallery-row gallery-row-primary">
+          <figure class="experience-frame experience-dashboard reveal"><img src="/src/assets/landing-dashboard-02.png" alt="Habit Tracker dashboard with daily and weekly progress charts and a monthly check-in grid" width="1680" height="946" loading="lazy"><figcaption class="experience-caption">Your progress, in one considered view.</figcaption></figure>
+          <figure class="experience-frame experience-habits reveal"><img src="/src/assets/landing-habits-detail.png" alt="A weekly view of habit check-ins for workouts, healthy food, reading, hydration, meditation, and coding" width="1331" height="1200" loading="lazy"><figcaption class="experience-caption">A week of small steps, at a glance.</figcaption></figure>
+        </div>
+        <div class="experience-gallery-row gallery-row-secondary">
+          <figure class="experience-frame experience-overview reveal"><img src="/src/assets/landing-dashboard-01.png" alt="An angled overview of the Habit Tracker dashboard, including analytics, habit check-ins, and progress summaries" width="1680" height="946" loading="lazy"><figcaption class="experience-caption">The wider picture, built one day at a time.</figcaption></figure>
+          <figure class="experience-frame experience-detail reveal"><img src="/src/assets/landing-dashboard-detail-fixed.png" alt="Close-up of the dashboard's overall progress, month projection, streak, and daily check-ins" width="632" height="612" loading="lazy"><figcaption class="experience-caption">A closer look at your progress.</figcaption></figure>
+          <figure class="experience-frame experience-customize reveal"><img src="/src/assets/landing-customize.png" alt="Customize your workspace with theme presets, appearance, accent colors, background and panel colors, and interface density" width="513" height="477" loading="lazy"><figcaption class="experience-caption">Make the workspace feel like yours.</figcaption></figure>
+        </div>
+      </div>
+      <div class="experience-meta"><span>DAILY CHECK-INS</span><span>CALENDAR & PROGRESS</span><span>YOUR OWN PACE</span></div>
+    </section>
+
+    <section class="tools-section" id="tools"><div class="section-wrap tools-inner">
+      <div class="section-heading tools-heading reveal"><div><p class="eyebrow">THE DETAILS THAT MAKE A DIFFERENCE</p><h2>Everything you need.<br><span>Nothing you don’t.</span></h2></div><p>A small set of useful tools to help you stay present, understand your patterns, and keep going.</p></div>
+      <div class="tool-list">
+        <article class="tool-row reveal"><span class="tool-number">01</span><div class="tool-title"><h3>Analytics</h3><span>SEE YOUR PROGRESS</span></div><p>Daily and weekly charts, completion rates, and streaks make your effort easier to understand.</p><span class="tool-mark" aria-hidden="true">↗</span></article>
+        <article class="tool-row reveal"><span class="tool-number">02</span><div class="tool-title"><h3>Focus Mode</h3><span>MAKE SPACE TO FOCUS</span></div><p>Bring your essential habits forward when you want a calmer, more intentional view.</p><span class="tool-mark" aria-hidden="true">↗</span></article>
+        <article class="tool-row reveal"><span class="tool-number">03</span><div class="tool-title"><h3>Goals & milestones</h3><span>KEEP YOUR INTENTION CLOSE</span></div><p>Connect a habit to a larger goal and keep the next step within reach.</p><span class="tool-mark" aria-hidden="true">↗</span></article>
+        <article class="tool-row reveal"><span class="tool-number">04</span><div class="tool-title"><h3>Wellbeing</h3><span>CHECK IN WITH YOURSELF</span></div><p>Track mood, sleep, and notes alongside your routines, in a space that stays personal.</p><span class="tool-mark" aria-hidden="true">↗</span></article>
+        <article class="tool-row reveal"><span class="tool-number">05</span><div class="tool-title"><h3>Customize your appearance</h3><span>MAKE YOUR SPACE YOURS</span></div><p>Choose a theme, accent color, and interface density to shape a workspace that feels right to you.</p><span class="tool-mark" aria-hidden="true">↗</span></article>
+      </div>
+      <a class="tools-link reveal" href="/app">Explore your workspace <span aria-hidden="true">↗</span></a>
+    </div></section>
+
+    <section class="how-section" id="how-it-works"><div class="section-wrap how-inner"><div class="how-heading reveal"><p class="eyebrow">A GENTLE WAY TO BEGIN</p><h2>Start small.<br><span>Keep going.</span></h2><p>No elaborate setup. Choose one thing that matters and let the practice grow from there.</p><a class="text-link" href="/app">Begin with one habit <span aria-hidden="true">↗</span></a></div><div class="steps"><article class="step reveal"><span class="step-number">01</span><div><h3>Choose what matters</h3><p>Start with a routine that feels meaningful to you.</p></div></article><article class="step reveal"><span class="step-number">02</span><div><h3>Check in as you go</h3><p>Mark the days you show up. Your history builds naturally.</p></div></article><article class="step reveal"><span class="step-number">03</span><div><h3>Find your rhythm</h3><p>Notice what’s working and make the practice your own.</p></div></article></div></div></section>
+
+    <section class="privacy-section section-wrap reveal"><div class="privacy-copy"><p class="eyebrow">YOUR SPACE, YOUR PACE</p><h2>Begin as a guest.<br><span>Stay because it helps.</span></h2><p>Your records can stay in this browser. Create an account when you want cloud sync across devices. You’re in control of how you use your space.</p><a class="text-link" href="/signin">Sign in or create an account <span aria-hidden="true">↗</span></a><p class="privacy-note"><span aria-hidden="true"></span> Start right away. Create an account only when you want sync.</p></div><img class="privacy-preview" src="/src/assets/landing-signin-preview.png" alt="Preview of the Habit Tracker sign-in window" loading="lazy"></section>
+
+    <section class="closing"><div class="section-wrap closing-inner reveal"><div class="closing-copy"><p class="eyebrow">ONE DAY AT A TIME</p><h2>Your next small step<br><span>starts here.</span></h2><p>Make a little room for the things you want to keep doing.</p><a class="button button-light" href="/app">Get started for free <span aria-hidden="true">↗</span></a><a class="closing-signin" href="/signin">Already have an account? Sign in</a></div><figure class="closing-art"><img src="/src/assets/landing-dashboard-01.png" alt="Habit Tracker dashboard showing daily progress, weekly analytics, and habit check-ins" loading="lazy"><figcaption>YOUR HABITS, IN VIEW</figcaption></figure></div></section>
+  </main>
+
+  <footer class="site-footer section-wrap"><a class="wordmark" href="#top"><span class="brand-mark" aria-hidden="true">h</span><span>Habit Tracker</span></a><p>A quieter way to keep showing up.</p><nav aria-label="Footer navigation"><a href="#experience">Experience</a><a href="#tools">Tools</a><a href="#how-it-works">How it works</a><a href="/signin">Sign in</a><a href="/app">Get started</a></nav><span class="footer-credit">Made by Rishik Patel</span></footer>
+</body>
+</html>

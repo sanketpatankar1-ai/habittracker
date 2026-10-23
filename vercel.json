@@ -1,0 +1,12 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "rewrites": [
+    { "source": "/runtime-config.json", "destination": "/api/runtime-config" },
+    { "source": "/app", "destination": "/tracker.html" },
+    { "source": "/app/", "destination": "/tracker.html" },
+    { "source": "/dashboard", "destination": "/tracker.html" },
+    { "source": "/dashboard/", "destination": "/tracker.html" },
+    { "source": "/signin", "destination": "/tracker.html" },
+    { "source": "/signin/", "destination": "/tracker.html" }
+  ]
+}

@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Habit Tracker</title>
+<style>html.cloud-booting #app{visibility:hidden}#cloudBoot{display:none}html.cloud-booting #cloudBoot{position:fixed;inset:0;display:grid;place-items:center;background:#080a0f;color:#f2f4f8;z-index:200;font:14px system-ui,sans-serif}</style>
+<script>document.documentElement.classList.add('cloud-booting')</script>
+<script>
+try {
+  const root = document.documentElement;
+  const saved = JSON.parse(localStorage.getItem('ht_theme_settings') || 'null');
+  const legacy = localStorage.getItem('ht_theme');
+  if (['light', 'dark'].includes(saved?.appearance)) root.dataset.theme = saved.appearance;
+  else if (['light', 'dark'].includes(legacy)) root.dataset.theme = legacy;
+  if (['compact', 'comfortable', 'spacious'].includes(saved?.density)) root.dataset.density = saved.density;
+} catch { /* Preferences are applied by the app after startup if storage is unavailable. */ }
+</script>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@200;300;400;500&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<link rel="stylesheet" href="/src/styles.css">
+</head>
+<body>
+<div id="cloudBoot" role="status">Loading your Habit Tracker…</div>
+<div id="app">
+  <header>
+    <div class="brand"><h1>Habit Tracker</h1><span class="sub">Consistency wins</span></div>
+    <div class="header-actions">
+      <nav class="primary-nav" aria-label="Primary actions">
+        <div class="notewrap">
+          <button class="btn nav-action notebtn" id="noteBtn" onclick="toggleNotes(event)" title="Notes" aria-label="Notes" aria-haspopup="dialog" aria-expanded="false"><svg viewBox="0 0 24 24"><path d="M5 4h14v11l-5 5H5z"/><path d="M14 20v-5h5"/><path d="M8.5 9h7M8.5 12.5h4"/></svg><span class="nav-label">Notes</span><span class="nbadge" id="noteBadge">0</span></button>
+          <div class="notepop" id="notePop" role="dialog" aria-label="Quick notes">
+            <div class="nphead"><h2>Notes <span class="sub" id="noteCount"></span></h2><button onclick="toggleNotes()" aria-label="Close notes">&times;</button></div>
+            <div class="npadd"><input id="noteInput" maxlength="160" placeholder="Add a quick note..." autocomplete="off" onkeydown="if(event.key==='Enter')addNote()"><button class="btn pri" onclick="addNote()">Add</button></div>
+            <ul class="nplist" id="noteList"></ul>
+          </div>
+        </div>
+        <div class="calendar-wrap">
+          <button class="btn nav-action" id="calendarBtn" type="button" onclick="toggleCalendar(event)" aria-label="Calendar" title="Calendar navigation" aria-haspopup="dialog" aria-controls="calendarPop" aria-expanded="false"><svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15" rx="2"/><path d="M7.5 3.5v3M16.5 3.5v3M3.5 9.5h17M8 13h.01M12 13h.01M16 13h.01M8 16.5h.01M12 16.5h.01"/></svg><span class="nav-label">Calendar</span></button>
+          <div class="calendar-pop" id="calendarPop" role="dialog" aria-label="Calendar navigation" hidden>
+            <div class="calendar-pop-head"><strong>Go to month</strong><button class="calendar-today" type="button" onclick="goToday();closeCalendar(true)">Today</button></div>
+            <div class="calendar-controls">
+              <button class="ic" type="button" onclick="shiftMonth(-1);closeCalendar(true)" aria-label="Previous month" title="Previous month">‹</button>
+              <select id="monthSelect" onchange="updateCalendar();closeCalendar(true)" aria-label="Month"><option value="0">Jan</option><option value="1">Feb</option><option value="2">Mar</option><option value="3">Apr</option><option value="4">May</option><option value="5">Jun</option><option value="6">Jul</option><option value="7">Aug</option><option value="8">Sep</option><option value="9">Oct</option><option value="10">Nov</option><option value="11">Dec</option></select>
+              <select id="yearSelect" onchange="updateCalendar();closeCalendar(true)" aria-label="Year"></select>
+              <button class="ic" type="button" onclick="shiftMonth(1);closeCalendar(true)" aria-label="Next month" title="Next month">›</button>
+            </div>
+          </div>
+        </div>
+        <button class="btn nav-action" id="focusModeBtn" type="button" onclick="toggleFocusMode()" aria-label="Focus Mode" aria-pressed="false" title="Toggle Focus mode"><svg viewBox="0 0 24 24"><path d="M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M21 16v3a2 2 0 0 1-2 2h-3M3 16v3a2 2 0 0 0 2 2h3"/><path d="M9 9h6v6H9z"/></svg><span class="nav-label">Focus Mode</span></button>
+        <button class="btn nav-action" id="downloadReportsBtn" type="button" onclick="openDownloadReports()" aria-label="Download" aria-haspopup="dialog" aria-controls="downloadReportsModal"><svg viewBox="0 0 24 24"><path d="M12 3v11m0 0 4-4m-4 4-4-4M4 17v3h16v-3"/></svg><span class="nav-label">Download</span></button>
+        <button class="btn nav-action" id="customizeThemeBtn" onclick="openThemeSettings()" aria-label="Customize" aria-haspopup="dialog" aria-controls="themeModal"><svg viewBox="0 0 24 24"><path d="M12 3.5v2M12 18.5v2M3.5 12h2m13 0h2M5.99 5.99l1.42 1.42m9.18 9.18 1.42 1.42m0-12.02-1.42 1.42m-9.18 9.18-1.42 1.42"/><circle cx="12" cy="12" r="5"/></svg><span class="nav-label">Customize</span></button>
+      </nav>
+      <div class="header-utilities">
+        <input id="importDataInput" type="file" accept="application/json,.json" hidden>
+        <details class="more-menu">
+          <summary class="btn more-trigger" aria-label="More actions"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></svg><span>More</span></summary>
+          <div class="more-pop" role="group" aria-label="More dashboard actions">
+            <div class="more-group"><h2>Sync status</h2><span class="cloud-indicator" id="cloudSyncIndicator" role="status" aria-label="Local only" title="Local only">Local only</span></div>
+            <div class="more-group"><h2>Appearance</h2><button class="more-item" type="button" onclick="toggleTheme();closeMoreMenu()">Switch theme</button></div>
+            <div class="more-group"><h2>Other tools</h2><button class="more-item" type="button" onclick="exportAppData();closeMoreMenu()" title="Export your saved habits and logs">Export data</button><button class="more-item" type="button" onclick="closeMoreMenu();openImportPicker()" title="Import a Habit Tracker backup">Import data</button><button class="more-item" type="button" onclick="closeMoreMenu();restoreHabit()" aria-label="Restore archived habit">Archived habits</button></div>
+          </div>
+        </details>
+        <button class="profile-trigger" id="accountBtn" type="button" onclick="openAccountDialog()" aria-label="Sign in to your account" aria-haspopup="dialog" aria-expanded="false"><span class="profile-avatar" id="profileAvatar" aria-hidden="true">U</span><span class="profile-label" id="profileLabel">Sign in</span></button>
+      </div>
+    </div>
+  </header>
+
+  <div class="top">
+    <section class="box pad">
+      <div class="row"><h2>Daily progress</h2><span class="sub"><i class="lg b"></i>Done<i class="lg b" style="margin-left:8px;opacity:.38"></i>Planned<i class="lg l" style="margin-left:12px"></i>7-day average<span id="avgDailyRate" style="margin-left:18px">Avg 0%</span></span></div>
+      <div class="cv"><canvas id="dailyChart"></canvas></div>
+    </section>
+    <section class="box pad">
+      <div class="row"><h2>Weekly progress</h2><span class="sub">* includes planned</span></div>
+      <div class="cv"><canvas id="weeklyChart"></canvas></div>
+    </section>
+    <section class="box pad glass">
+      <div class="row"><h2>Overall</h2><span class="sub" title="Completed and planned scheduled habit-days divided by all eligible scheduled habit-days this month">Done + planned / month goal</span></div>
+      <div class="sumwrap">
+        <div class="ring"><canvas id="donutChart" aria-label="Monthly projected completion"></canvas><div class="rc"><b id="donutPercent">0%</b><small id="donutSub"></small></div></div>
+        <div class="tiles">
+          <div class="tile"><span>Scheduled goal</span><strong id="statGoal">0</strong></div>
+          <div class="tile"><span>Done</span><strong id="statCompleted">0</strong></div>
+          <div class="tile"><span>Planned</span><strong id="statPlanned">0</strong></div>
+          <div class="tile"><span>Remaining</span><strong id="statLeft">0</strong></div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <section class="box panel">
+    <div class="scroll">
+      <table id="habitsTable">
+        <colgroup><col style="width:160px"><col><col><col><col><col><col><col><col><col><col><col><col><col><col><col><col><col><col><col><col><col><col><col><col><col><col><col><col><col><col><col><col style="width:78px"><col style="width:122px"></colgroup>
+        <thead>
+          <tr id="hr1"><th class="nm">Habits</th><th colspan="31" class="wk">Weeks</th><th colspan="2" class="wk">This month</th></tr>
+          <tr id="hr2"></tr><tr id="hr3"></tr>
+        </thead>
+        <tbody id="habitsTableBody"></tbody>
+      </table>
+    </div>
+    <div class="metrics">
+      <div class="mgrid"><span class="lb">Mood (tap)</span><span id="moodRow" style="display:contents"></span><span class="av" id="moodAvg"></span></div>
+      <div class="mgrid"><span class="lb">Sleep hrs</span><span id="sleepRow" style="display:contents"></span><span class="av" id="sleepAvg"></span></div>
+    </div>
+    <div class="addbar">
+      <label class="addfield" for="addInput">
+        <span class="plus">+</span>
+        <input id="addInput" placeholder="Add a new habit, e.g. Meditate for 10 minutes" autocomplete="off" onkeydown="if(event.key==='Enter')submitAdd()">
+        <span class="sub hint">or paste a list to add many</span>
+        <kbd>Enter</kbd>
+      </label>
+      <button class="btn pri addbtn" onclick="submitAdd()">Add habit</button>
+      <span class="sub qa">Quick add</span>
+      <div class="chips" id="chips"></div>
+    </div>
+  </section>
+
+  <section class="box rank">
+    <section class="bottom-feature goal-feature" aria-labelledby="goalHeading">
+      <div class="feature-head"><h2 id="goalHeading">Future goal</h2><button class="goal-manage-link" id="goalManageBtn" type="button" onclick="openGoalManager()">Manage</button></div>
+      <div id="goalSummary" class="goal-summary" aria-live="polite"><p class="goal-empty">Loading goals…</p></div>
+    </section>
+    <section class="bottom-feature insight-feature" aria-labelledby="insightHeading">
+      <div class="feature-head"><h2 id="insightHeading">Smart insight</h2><span class="sub">From your tracking</span></div>
+      <p id="smartInsight" class="insight-copy" aria-live="polite">Keep tracking to discover your patterns.</p>
+    </section>
+  </section>
+</div>
+
+<div class="modal goal-modal" id="goalModal" role="dialog" aria-modal="true" aria-labelledby="goalModalTitle" aria-hidden="true" onclick="if(event.target===this)closeGoalManager()">
+  <section class="box goal-modal-box">
+    <div class="row"><div><h2 id="goalModalTitle">Manage goals</h2><p class="sub goal-hint">Habit targets use checked scheduled days from their date range. Manual milestones are self-reported.</p></div><button class="btn" type="button" onclick="closeGoalManager()" aria-label="Close goal manager">Close</button></div>
+    <form id="goalForm" class="goal-form">
+      <input id="goalId" type="hidden">
+      <label for="goalTitleInput">Goal title</label><input id="goalTitleInput" maxlength="80" required placeholder="e.g. Read 15 times">
+      <label for="goalDescription">Description <span class="sub">optional</span></label><input id="goalDescription" maxlength="240" placeholder="A little context">
+      <div class="goal-form-row"><div><label for="goalType">Progress method</label><select id="goalType"><option value="habit">Existing habit</option><option value="manual">Manual milestone</option></select></div><div><label for="goalDeadline">Deadline</label><input id="goalDeadline" type="date" required></div></div>
+      <div id="goalHabitFields" class="goal-form-row"><div><label for="goalHabit">Habit</label><select id="goalHabit"></select></div><div><label for="goalStart">Count from</label><input id="goalStart" type="date" required></div></div>
+      <div class="goal-form-row"><div><label id="goalTargetLabel" for="goalTarget">Completion target</label><input id="goalTarget" type="number" min="1" max="10000" step="1" required value="10"></div><div id="goalManualFields" hidden><label for="goalManualProgress">Progress now <span class="sub">self-reported</span></label><input id="goalManualProgress" type="number" min="0" step="1" value="0"></div></div>
+      <p id="goalFormError" class="goal-error" role="alert"></p>
+      <div class="goal-form-actions"><button class="btn pri" id="goalSubmit" type="submit">Create goal</button></div>
+    </form>
+    <div class="goal-saved"><h3>Saved goals</h3><ul id="goalList" class="goal-list"></ul></div>
+  </section>
+</div>
+
+<div class="modal" id="downloadReportsModal" role="dialog" aria-modal="true" aria-labelledby="downloadReportsTitle" aria-hidden="true" onclick="if(event.target===this)closeDownloadReports()">
+  <section class="box download-reports-box">
+    <div class="row"><h2 id="downloadReportsTitle">Download monthly report</h2><button class="btn" type="button" onclick="closeDownloadReports()" aria-label="Close download options">Close</button></div>
+    <p class="sub download-reports-hint">Choose a format for the selected month.</p>
+    <div class="download-report-options">
+      <button class="btn pri" type="button" onclick="downloadMonthlyPdf()">Download PDF</button>
+      <button class="btn" type="button" onclick="downloadMonthlyPng()">Download PNG</button>
+      <button class="btn" type="button" onclick="downloadMonthlyCsv()">Download CSV</button>
+      <button class="btn" type="button" onclick="downloadMonthlyReport()">Download HTML report</button>
+    </div>
+  </section>
+</div>
+
+<div class="modal" id="accountModal" role="dialog" aria-modal="true" aria-labelledby="accountTitle" aria-hidden="true" onclick="if(event.target===this)closeAccountDialog()">
+  <div class="account-ambient-wrap" aria-hidden="true">
+    <video class="account-ambient-video" autoplay muted loop playsinline preload="metadata" poster="/src/assets/landing-dashboard-01.png" tabindex="-1"><source src="/src/assets/hero-habit-video.mp4" type="video/mp4"></video>
+    <div class="account-logo-mask"></div>
+  </div>
+  <div class="account-veil" aria-hidden="true"></div>
+  <section class="account-box">
+    <button class="account-close" type="button" onclick="closeAccountDialog()" aria-label="Close account dialog">&times;</button>
+    <div class="account-orbit orbit-one"></div><div class="account-orbit orbit-two"></div>
+    <div class="account-content">
+      <div class="account-mark" aria-hidden="true"><span>H</span></div>
+      <p class="account-eyebrow">YOUR PERSONAL SPACE</p>
+      <h2 id="accountTitle">Welcome back</h2>
+      <p class="account-description">Sign in to sync your habits and progress.</p>
+      <p class="account-status" id="accountStatus" role="status" aria-live="polite"></p>
+      <div id="accountSetupHelp" class="account-help" hidden>Cloud accounts need Supabase setup. Add the project URL and publishable/anon key to <code>.env.local</code>, apply the included database migration, then restart this app. No passwords or service-role keys are stored in this project.</div>
+      <form id="accountForm" class="account-form">
+        <label for="accountEmail">Email address</label><input id="accountEmail" type="email" autocomplete="email" required maxlength="254" placeholder="you@example.com">
+        <label for="accountPassword">Password</label><input id="accountPassword" type="password" autocomplete="current-password" minlength="8" required placeholder="At least 8 characters">
+        <button class="btn pri" id="accountSubmit" type="submit">Sign in</button>
+      </form>
+      <div class="account-actions" id="accountSignedOutActions">
+        <button class="account-link" id="accountModeToggle" type="button" onclick="toggleAccountMode()">Create account</button>
+        <button class="account-link" type="button" onclick="sendPasswordReset()">Forgot password?</button>
+      </div>
+      <div class="account-actions signed-in-actions" id="accountSignedInActions" hidden>
+        <span class="account-email" id="accountEmailLabel"></span>
+        <button class="btn pri" type="button" onclick="signOutAccount()">Sign out</button>
+      </div>
+      <div class="account-secure"><span></span>Private and secure account sync</div>
+    </div>
+  </section>
+</div>
+
+<div class="modal theme-modal" id="themeModal" role="dialog" aria-modal="true" aria-labelledby="themeTitle" aria-hidden="true" onclick="if(event.target===this)closeThemeSettings()">
+  <section class="box">
+    <div class="theme-head"><div><h2 class="theme-title" id="themeTitle">Customize your workspace</h2><p class="sub" style="margin-top:4px">Personalize the dashboard colors and spacing.</p></div><button class="ic" onclick="closeThemeSettings()" aria-label="Close theme settings">&times;</button></div>
+    <div class="theme-form">
+      <div class="theme-field"><label for="themePreset">Theme preset</label><select id="themePreset"><option value="midnight">Midnight</option><option value="obsidian">Obsidian Black</option><option value="clean-light">Clean Light</option><option value="violet">Violet</option><option value="sage">Sage</option></select></div>
+      <div class="theme-field"><label for="themeAppearance">Appearance</label><select id="themeAppearance"><option value="dark">Dark</option><option value="light">Light</option></select></div>
+      <div class="theme-field full"><span>Accent color</span><div class="swatches" id="themeSwatches" aria-label="Curated accent colors"></div></div>
+      <div class="theme-colors theme-field full">
+        <div class="theme-field"><label for="themeAccent">Custom accent</label><input id="themeAccent" type="color" value="#d9dee8"></div>
+        <div class="theme-field"><label for="themeBackground">Background color</label><input id="themeBackground" type="color" value="#080a0f"></div>
+        <div class="theme-field"><label for="themeSurface">Panel color</label><input id="themeSurface" type="color" value="#11151c"></div>
+        <div class="theme-field"><label for="themeDensity">Interface density</label><select id="themeDensity"><option value="compact">Compact</option><option value="comfortable">Comfortable</option><option value="spacious">Spacious</option></select></div>
+      </div>
+      <div class="theme-field full"><span>Live preview</span><div class="theme-preview"><div><strong>Daily focus</strong><div class="sample-bar" aria-label="Sample progress, 68 percent"><i></i></div></div><input class="sample-check" type="checkbox" checked aria-label="Sample completed habit"></div></div>
+    </div>
+    <div class="theme-actions"><button class="btn" onclick="resetThemeDraft()">Reset to default</button><div class="right"><button class="btn" onclick="closeThemeSettings()">Cancel</button><button class="btn pri" onclick="saveThemeSettings()">Save changes</button></div></div>
+  </section>
+</div>
+
+<script type="module" src="/src/main.js?v=20261019-goals"></script>
+</body>
+</html>
